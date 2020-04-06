@@ -1,6 +1,6 @@
 import React from "react";
 
-const Country = ({ data }) => {
+const Country = ({ data, setFilt_name }) => {
   return (
     <div>
       {data.length === 1
@@ -14,13 +14,29 @@ const Country = ({ data }) => {
                 {el.languages.map((lang, i) => (
                   <li key={i}>{lang.name}</li>
                 ))}
-                </ul>
-                <img src={el.flag} alt={el.name} style={{width: "150px", border:"1px solid black"}}/>
+              </ul>
+              <img
+                src={el.flag}
+                alt={el.name}
+                style={{ width: "150px", border: "1px solid black" }}
+              />
             </div>
           ))
         : data.length > 10
         ? "Too many matches, specify another filter"
-        : data.map((el) => <h1 key={el.numericCode}>{el.name}</h1>)}
+        : data.map((el) => (
+            <div>
+              <h1 key={el.numericCode} style={{ display: "inline" }}>
+                {el.name}
+              </h1>
+              <button
+                onClick={() => setFilt_name(el.name)}
+                style={{ display: "inline" }}
+              >
+                Show details
+              </button>
+            </div>
+          ))}
     </div>
   );
 };
