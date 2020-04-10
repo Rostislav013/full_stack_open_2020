@@ -1,4 +1,5 @@
 import React from "react";
+import Weather from "./Weather";
 
 const Country = ({ data, setFilt_name }) => {
   return (
@@ -20,15 +21,14 @@ const Country = ({ data, setFilt_name }) => {
                 alt={el.name}
                 style={{ width: "150px", border: "1px solid black" }}
               />
+              <Weather country={el.name} />
             </div>
           ))
         : data.length > 10
         ? "Too many matches, specify another filter"
-        : data.map((el) => (
-            <div>
-              <h1 key={el.numericCode} style={{ display: "inline" }}>
-                {el.name}
-              </h1>
+        : data.map((el, i) => (
+            <div key={el.numericCode}>
+              <h1 style={{ display: "inline" }}>{el.name}</h1>
               <button
                 onClick={() => setFilt_name(el.name)}
                 style={{ display: "inline" }}

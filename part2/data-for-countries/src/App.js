@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Filter from "./Components/Filter";
 import Country from "./Components/Country";
+
 const App = () => {
   const [countries, setSountries] = useState([]);
   const [filt_name, setFilt_name] = useState("");
@@ -16,7 +17,7 @@ const App = () => {
 
   useEffect(() => {
     axios.get("https://restcountries.eu/rest/v2/all").then((response) => {
-      console.log("Promise fulfilled");
+      console.log(response.data);
       setSountries(response.data);
     });
   }, []);
