@@ -3,15 +3,17 @@ import Persons from "./Components/Persons";
 import PersonForm from "./Components/PersonForm";
 import Filter from "./Components/Filter";
 import axios from "axios";
+import personService from "./services/persons";
+
 const App = () => {
   const [persons, setPersons] = useState([]);
+
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("Promise fulfilled");
-      setPersons(response.data);
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
-  
+
   // Adding new contact
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -25,8 +27,6 @@ const App = () => {
     : persons.filter((person) =>
         person.name.toUpperCase().includes(filt_name.toUpperCase())
       );
-  //console.log(persons.filter((person) => person.name.includes(filt_name)));
-  //console.log(filt_name);
 
   const handleFilter = (event) => {
     setFilt_name(event.target.value);
@@ -46,6 +46,7 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
+      id: persons.length + 1,
     };
     // prevent adding existing name
     const names = persons.map((el) => el.name); // array of existing names
@@ -54,9 +55,11 @@ const App = () => {
     } else if (names.includes(newName)) {
       alert(`${newName} is already in phonebook.`);
     } else {
-      setPersons(persons.concat(personObject));
-      setNewName(""); // reset input
-      setNewNumber("");
+      personService.create(personObject).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewNumber("");
+      });
     }
   };
 
