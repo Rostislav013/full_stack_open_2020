@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Persons from "./Components/Persons";
 import PersonForm from "./Components/PersonForm";
 import Filter from "./Components/Filter";
-import axios from "axios";
 import personService from "./services/persons";
 
 const App = () => {
@@ -46,7 +45,7 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
+      id: "_" + Math.random().toString(36).substr(2, 9),
     };
     // prevent adding existing name
     const names = persons.map((el) => el.name); // array of existing names
