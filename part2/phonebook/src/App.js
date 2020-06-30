@@ -4,6 +4,11 @@ import PersonForm from "./Components/PersonForm";
 import Filter from "./Components/Filter";
 import personService from "./services/persons";
 
+const messageStyle = {
+  color: "green",
+  backgroundColor: "#c7dbc3",
+  border: "solid 1px green",
+};
 const App = () => {
   const [persons, setPersons] = useState([]);
 
@@ -16,11 +21,10 @@ const App = () => {
   // Adding new contact
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-
   // for Filtering (FIND)
   const [showAll, setShowAll] = useState(true);
   const [filt_name, setFilt_name] = useState("");
-
+  const [message, setMessage] = useState("");
   const personsToShow = showAll
     ? persons
     : persons.filter((person) =>
@@ -63,6 +67,10 @@ const App = () => {
     } else {
       personService.create(personObject).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
+        setMessage(`Added ${personObject.name}`);
+        setTimeout(() => {
+          setMessage(null);
+        }, 2000);
         setNewName("");
         setNewNumber("");
       });
@@ -77,24 +85,49 @@ const App = () => {
 
     personService.update(id, personObject).then((returnedPerson) => {
       setPersons(
-        persons.filter((person) => person.id !== id).concat(returnedPerson)
+        persons.map((person) => (person.id !== id ? person : returnedPerson))
       );
+      setMessage(`${personObject.name} number was changed`);
+      setTimeout(() => {
+        setMessage(null);
+      }, 2000);
+      // second way
+      // setPersons(
+      // persons.filter((person) => person.id !== id).concat(returnedPerson)
+      //);
       setNewName("");
       setNewNumber("");
     });
   };
 
   const handleDelete = (id) => {
-    if (window.confirm(`Delete id ${id}`)) {
-      console.log("delete", id);
+    if (
+      window.confirm(
+        `Delete  ${persons.find((element) => element.id === id).name}?`
+      )
+    ) {
+      //console.log("delete", id);
       personService.deletePerson(id).catch((e) => console.log(e.message));
       setPersons(persons.filter((person) => person.id !== id));
     }
   };
 
+  const Notification = ({ message }) => {
+    if (message === null) {
+      return null;
+    }
+
+    return (
+      <div style={messageStyle}>
+        <p style={{ margin: "10px" }}>{message}</p>
+      </div>
+    );
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
+      {message && <Notification message={message} />}
       <Filter filt_name={filt_name} handleFilter={handleFilter} />
 
       <h3 style={{ margin: "10px" }}>Add a contact</h3>
