@@ -17,7 +17,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
 
-  // for Filtering
+  // for Filtering (FIND)
   const [showAll, setShowAll] = useState(true);
   const [filt_name, setFilt_name] = useState("");
 
@@ -33,11 +33,11 @@ const App = () => {
   };
 
   const handleNewName = (event) => {
-    console.log(event.target.value);
+    //console.log(event.target.value);
     setNewName(event.target.value);
   };
   const handleNewNumber = (event) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     setNewNumber(event.target.value);
   };
   const addPerson = (event) => {
@@ -52,7 +52,14 @@ const App = () => {
     if (newName === "" || newNumber === "") {
       alert("Type a name with number");
     } else if (names.includes(newName)) {
-      alert(`${newName} is already in phonebook.`);
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const idUpdate = persons.find((element) => element.name === newName).id;
+        handleUpdateNumber(idUpdate, personObject);
+      }
     } else {
       personService.create(personObject).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
@@ -60,6 +67,21 @@ const App = () => {
         setNewNumber("");
       });
     }
+  };
+  const handleUpdateNumber = (id) => {
+    const personObject = {
+      name: newName,
+      number: newNumber,
+      id: id,
+    };
+
+    personService.update(id, personObject).then((returnedPerson) => {
+      setPersons(
+        persons.filter((person) => person.id !== id).concat(returnedPerson)
+      );
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
   const handleDelete = (id) => {
