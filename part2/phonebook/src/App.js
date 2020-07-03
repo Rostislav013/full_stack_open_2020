@@ -4,11 +4,6 @@ import PersonForm from "./Components/PersonForm";
 import Filter from "./Components/Filter";
 import personService from "./services/persons";
 
-const messageStyle = {
-  color: "green",
-  backgroundColor: "#c7dbc3",
-  border: "solid 1px green",
-};
 const App = () => {
   const [persons, setPersons] = useState([]);
 
@@ -21,10 +16,19 @@ const App = () => {
   // Adding new contact
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+
   // for Filtering (FIND)
   const [showAll, setShowAll] = useState(true);
   const [filt_name, setFilt_name] = useState("");
   const [message, setMessage] = useState("");
+  const [notificationColor, setNotificationColor] = useState(false);
+
+  const messageStyle = {
+    color: notificationColor ? "green" : "red",
+    backgroundColor: "#c7dbc3",
+    border: notificationColor ? "solid 1px green" : "solid 1px red",
+  };
+
   const personsToShow = showAll
     ? persons
     : persons.filter((person) =>
@@ -67,6 +71,7 @@ const App = () => {
     } else {
       personService.create(personObject).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
+        setNotificationColor(true);
         setMessage(`Added ${personObject.name}`);
         setTimeout(() => {
           setMessage(null);
@@ -83,21 +88,29 @@ const App = () => {
       id: id,
     };
 
-    personService.update(id, personObject).then((returnedPerson) => {
-      setPersons(
-        persons.map((person) => (person.id !== id ? person : returnedPerson))
-      );
-      setMessage(`${personObject.name} number was changed`);
-      setTimeout(() => {
-        setMessage(null);
-      }, 2000);
-      // second way
-      // setPersons(
-      // persons.filter((person) => person.id !== id).concat(returnedPerson)
-      //);
-      setNewName("");
-      setNewNumber("");
-    });
+    personService
+      .update(id, personObject)
+      .then((returnedPerson) => {
+        setPersons(
+          persons.map((person) => (person.id !== id ? person : returnedPerson))
+        );
+        setNotificationColor(true);
+        setMessage(`${personObject.name} number was changed`);
+
+        setTimeout(() => {
+          setMessage(null);
+        }, 2000);
+
+        setNewName("");
+        setNewNumber("");
+      })
+      .catch((error) => {
+        setNotificationColor(false);
+        setMessage(
+          `Information of ${personObject.name} has already been removed from server`
+        );
+        setPersons(persons.filter((person) => person.id !== id));
+      });
   };
 
   const handleDelete = (id) => {
@@ -116,7 +129,6 @@ const App = () => {
     if (message === null) {
       return null;
     }
-
     return (
       <div style={messageStyle}>
         <p style={{ margin: "10px" }}>{message}</p>
