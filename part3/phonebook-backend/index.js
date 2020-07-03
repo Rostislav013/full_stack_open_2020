@@ -67,10 +67,20 @@ const generateId = () => {
 };
 app.post("/api/persons", (req, res) => {
   const body = req.body;
-
+  const someName = persons.find((person) => person.name === body.name);
+  console.log(someName);
   if (!body.name) {
     return res.status(400).json({
-      error: "content missing",
+      error: "name is missing",
+    });
+  } else if (!body.number) {
+    return res.status(400).json({
+      error: "number is missing",
+    });
+  } else if (someName.name === body.name) {
+    // 409 conflict
+    return res.status(409).json({
+      error: "this contact already exist is missing",
     });
   }
   const person = {
