@@ -1,6 +1,11 @@
 const express = require("express");
 const app = express();
 
+/*In order to access the data easily, 
+we need the help of the express json-parser, 
+that is taken to use with command app.use(express.json()). */
+app.use(express.json());
+
 let persons = [
   {
     name: "Arto Hellas",
@@ -51,8 +56,32 @@ app.get("/api/persons/:id", (req, res) => {
 app.delete("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
   persons = persons.filter((person) => person.id !== id);
+
   res.status(204).end();
   // console.log(persons);
+});
+
+const generateId = () => {
+  const id = Math.floor(Math.random() * 20000);
+  return id;
+};
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+
+  if (!body.name) {
+    return res.status(400).json({
+      error: "content missing",
+    });
+  }
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId(),
+  };
+  console.log(person);
+
+  persons = persons.concat(person);
+  res.json(persons);
 });
 
 const port = 3001;
