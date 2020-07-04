@@ -17,23 +17,11 @@ app.use(
       "-",
       tokens["response-time"](req, res),
       "ms",
+      JSON.stringify(req.body),
     ].join(" ");
   })
 );
 
-console.log(
-  morgan(function (tokens, req, res) {
-    return [
-      tokens.method(req, res),
-      tokens.url(req, res),
-      tokens.status(req, res),
-      tokens.res(req, res, "content-length"),
-      "-",
-      tokens["response-time"](req, res),
-      "ms",
-    ].join(" ");
-  })
-);
 let persons = [
   {
     name: "Arto Hellas",
@@ -95,8 +83,8 @@ const generateId = () => {
 };
 app.post("/api/persons", (req, res) => {
   const body = req.body;
-  const someName = persons.find((person) => person.name === body.name);
-  console.log(someName);
+  const sameName = persons.find((person) => person.name === body.name);
+  //console.log(sameName);
   if (!body.name) {
     return res.status(400).json({
       error: "name is missing",
@@ -105,7 +93,7 @@ app.post("/api/persons", (req, res) => {
     return res.status(400).json({
       error: "number is missing",
     });
-  } else if (someName.name === body.name) {
+  } else if (sameName && sameName.name === body.name) {
     // 409 conflict
     return res.status(409).json({
       error: "this contact already exist is missing",
@@ -116,7 +104,7 @@ app.post("/api/persons", (req, res) => {
     number: body.number,
     id: generateId(),
   };
-  console.log(person);
+  //console.log(person);
 
   persons = persons.concat(person);
   res.json(persons);
