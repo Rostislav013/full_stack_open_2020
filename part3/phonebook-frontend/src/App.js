@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import Persons from "./Components/Persons";
 import PersonForm from "./Components/PersonForm";
 import Filter from "./Components/Filter";
@@ -70,7 +71,7 @@ const App = () => {
       }
     } else {
       personService.create(personObject).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
+        setPersons(returnedPerson);
         setNotificationColor(true);
         setMessage(`Added ${personObject.name}`);
         setTimeout(() => {

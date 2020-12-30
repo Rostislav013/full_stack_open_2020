@@ -16,4 +16,5 @@ const Persons = ({ persons, handleDelete }) => {
     </div>
   );
 };
+
 export default Persons;

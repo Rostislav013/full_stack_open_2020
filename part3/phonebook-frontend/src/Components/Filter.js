@@ -14,4 +14,5 @@ const Filter = (props) => {
     </div>
   );
 };
+
 export default Filter;
