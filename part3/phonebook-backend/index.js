@@ -1,11 +1,13 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const cors = require("cors");
 
 /*In order to access the data easily, 
 we need the help of the express json-parser, 
 that is taken to use with command app.use(express.json()). */
 app.use(express.json());
+app.use(express.static("build"));
 
 app.use(
   morgan(function (tokens, req, res) {
@@ -21,6 +23,8 @@ app.use(
     ].join(" ");
   })
 );
+
+app.use(cors());
 
 let persons = [
   {
@@ -110,7 +114,7 @@ app.post("/api/persons", (req, res) => {
   res.json(persons);
 });
 
-const port = 3001;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
